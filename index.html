@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FontVault — Roblox Custom Font Library</title>
+<style>
+:root{
+  --bg:#0b0d14;
+  --glass:rgba(255,255,255,0.08);
+  --glass-strong:rgba(255,255,255,0.14);
+  --stroke:rgba(255,255,255,0.18);
+  --text:#ffffff;
+  --muted:rgba(255,255,255,0.62);
+  --accent:#8b7bff;
+  --accent2:#4fd6ff;
+  --radius:22px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:var(--text);
+  background:var(--bg);
+  min-height:100vh;
+  overflow-x:hidden;
+  position:relative;
+}
+/* Animated liquid gradient background */
+.bg-orbs{position:fixed;inset:0;z-index:0;overflow:hidden;filter:blur(70px);opacity:0.85}
+.orb{position:absolute;border-radius:50%;mix-blend-mode:screen;animation:float 18s ease-in-out infinite}
+.orb.a{width:520px;height:520px;background:radial-gradient(circle at 30% 30%,#7b5bff,#3a1e8f 70%);top:-120px;left:-80px}
+.orb.b{width:460px;height:460px;background:radial-gradient(circle at 30% 30%,#22d3ee,#0e7490 70%);bottom:-140px;right:-60px;animation-delay:-6s}
+.orb.c{width:380px;height:380px;background:radial-gradient(circle at 30% 30%,#f472b6,#9d174d 70%);top:40%;left:55%;animation-delay:-11s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(60px,-40px) scale(1.08)}66%{transform:translate(-40px,50px) scale(0.94)}}
+@media (prefers-reduced-motion: reduce){.orb{animation:none}}
+
+.wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:40px 24px 80px}
+
+/* Header */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:48px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:19px;letter-spacing:.3px}
+.brand .logo{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 6px 20px rgba(123,91,255,.45);font-size:20px}
+.gh-link{display:flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;background:var(--glass);border:1px solid var(--stroke);color:var(--text);text-decoration:none;font-size:14px;font-weight:600;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:.25s}
+.gh-link:hover{background:var(--glass-strong);transform:translateY(-1px)}
+
+/* Hero */
+.hero{text-align:center;margin-bottom:44px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:7px 15px;border-radius:999px;background:var(--glass);border:1px solid var(--stroke);font-size:13px;color:var(--muted);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);margin-bottom:22px}
+.pill .dot{width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 10px #4ade80}
+.hero h1{font-size:clamp(34px,6vw,60px);line-height:1.05;font-weight:800;letter-spacing:-1.5px;margin-bottom:18px}
+.hero h1 .grad{background:linear-gradient(120deg,#a78bff,#4fd6ff,#f472b6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--muted);font-size:17px;max-width:620px;margin:0 auto;line-height:1.6}
+
+/* Controls */
+.controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center;margin:36px 0 30px}
+.search{position:relative;flex:1;min-width:260px;max-width:440px}
+.search input{width:100%;padding:14px 18px 14px 46px;border-radius:16px;border:1px solid var(--stroke);background:var(--glass);color:var(--text);font-size:15px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);outline:none;transition:.25s}
+.search input::placeholder{color:var(--muted)}
+.search input:focus{border-color:rgba(139,123,255,.7);box-shadow:0 0 0 4px rgba(139,123,255,.18)}
+.search svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);opacity:.6}
+.tabs{display:flex;gap:6px;padding:5px;border-radius:16px;background:var(--glass);border:1px solid var(--stroke);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.tab{padding:9px 18px;border-radius:12px;border:none;background:transparent;color:var(--muted);font-weight:600;font-size:14px;cursor:pointer;transition:.22s}
+.tab.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 6px 18px rgba(123,91,255,.4)}
+
+/* Grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+.card{position:relative;padding:26px 24px 22px;border-radius:var(--radius);background:var(--glass);border:1px solid var(--stroke);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);overflow:hidden;cursor:pointer;transition:transform .3s cubic-bezier(.2,.8,.2,1),border-color .3s,background .3s;box-shadow:0 8px 30px rgba(0,0,0,.28)}
+.card::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.10),transparent 45%);opacity:0;transition:.35s;pointer-events:none}
+.card:hover{transform:translateY(-6px);border-color:rgba(139,123,255,.55);background:var(--glass-strong)}
+.card:hover::before{opacity:1}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
+.card-name{font-size:15px;font-weight:700}
+.card-meta{font-size:12px;color:var(--muted);margin-top:3px}
+.badge{font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px;border:1px solid var(--stroke);color:var(--muted);white-space:nowrap}
+.badge.roblox{color:#c4b5ff;border-color:rgba(139,123,255,.5);background:rgba(139,123,255,.12)}
+.badge.external{color:#7fe3ff;border-color:rgba(79,214,255,.4);background:rgba(79,214,255,.1)}
+.preview{font-size:38px;line-height:1.15;margin:6px 0 22px;min-height:54px;word-break:break-word}
+.copy-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:16px;border-top:1px solid var(--stroke)}
+.copy-hint{font-size:12.5px;color:var(--muted)}
+.copy-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:11px;border:1px solid var(--stroke);background:var(--glass-strong);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;transition:.2s}
+.copy-btn:hover{background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent}
+.copy-btn.copied{background:linear-gradient(135deg,#22c55e,#16a34a);border-color:transparent}
+
+.empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted)}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(24px);background:rgba(20,22,32,.85);border:1px solid var(--stroke);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding:14px 22px;border-radius:14px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;opacity:0;pointer-events:none;transition:.3s;z-index:50;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast .check{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#16a34a);display:grid;place-items:center;font-size:13px}
+
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(5,6,12,.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:60;padding:20px}
+.modal-bg.show{display:flex}
+.modal{width:100%;max-width:640px;border-radius:24px;background:rgba(24,26,38,.85);border:1px solid var(--stroke);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.6)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--stroke)}
+.modal-head h3{font-size:16px;font-weight:700}
+.modal-close{background:var(--glass);border:1px solid var(--stroke);color:var(--text);width:34px;height:34px;border-radius:10px;cursor:pointer;font-size:16px;transition:.2s}
+.modal-close:hover{background:var(--glass-strong)}
+.modal pre{margin:0;padding:22px 24px;font-family:"SF Mono",Menlo,Consolas,monospace;font-size:13px;line-height:1.65;color:#d5d8ff;overflow-x:auto;white-space:pre;max-height:46vh}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;padding:16px 24px;border-top:1px solid var(--stroke)}
+
+footer{text-align:center;margin-top:64px;color:var(--muted);font-size:13px;line-height:1.7}
+
+@media (max-width:520px){
+  .wrap{padding:28px 16px 60px}
+  .grid{grid-template-columns:1fr}
+  .tabs{width:100%;justify-content:center}
+}
+</style>
+</head>
+<body>
+<div class="bg-orbs"><div class="orb a"></div><div class="orb b"></div><div class="orb c"></div></div>
+
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand"><span class="logo">🅵</span> FontVault</div>
+    <a class="gh-link" id="repoLink" href="#" target="_blank" rel="noopener">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.7.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
+      Storage Repo
+    </a>
+  </div>
+
+  <div class="hero">
+    <div class="pill"><span class="dot"></span> Fonts served via GitHub · jsDelivr CDN</div>
+    <h1>Custom Fonts cho <span class="grad">Roblox</span><br>chỉ với một cú nhấp</h1>
+    <p>Duyệt thư viện font, xem trước trực tiếp, rồi bấm để tự động copy script Lua. Script dùng <code>writefile()</code>, <code>getcustomasset()</code> và <code>readfile()</code> để nạp font vào game của bạn.</p>
+  </div>
+
+  <div class="controls">
+    <div class="search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="search" type="text" placeholder="Tìm font theo tên...">
+    </div>
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-filter="all">Tất cả</button>
+      <button class="tab" data-filter="roblox">Roblox</button>
+      <button class="tab" data-filter="external">External</button>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>
+    FontVault — lưu trữ font trên GitHub, phân phối qua jsDelivr CDN.<br>
+    Chỉ dùng cho mục đích tùy biến giao diện cá nhân.
+  </footer>
+</div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalTitle">Script</h3>
+      <button class="modal-close" id="modalClose">✕</button>
+    </div>
+    <pre id="modalCode"></pre>
+    <div class="modal-foot">
+      <button class="copy-btn" id="modalCopy">📋 Copy script</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="check">✓</span> <span id="toastMsg">Đã copy script!</span></div>
+
+<script>
+// ====== Cấu hình kho lưu trữ ======
+// Đổi các giá trị này thành repo GitHub của bạn.
+const REPO = { user: "article-hub-studio", repo: "Font-Roblox-Finder", branch: "main", dir: "fonts" };
+document.getElementById('repoLink').href = `https://github.com/${REPO.user}/${REPO.repo}`;
+const cdn = (file) => `https://cdn.jsdelivr.net/gh/${REPO.user}/${REPO.repo}@${REPO.branch}/${REPO.dir}/${file}`;
+
+// ====== Danh sách font ======
+// previewCss: font-family dùng để xem trước (font web có sẵn / gần giống).
+// file: tên file .ttf trong kho GitHub.
+let FONTS = [
+  { name:"Roboto Mono", cat:"roblox", file:"RobotoMono-Regular.ttf", previewCss:"'Courier New',monospace", note:"Monospace · code style" },
+  { name:"Montserrat", cat:"roblox", file:"Montserrat-Bold.ttf", previewCss:"'Trebuchet MS',sans-serif", note:"Geometric · tiêu đề" },
+  { name:"Poppins", cat:"roblox", file:"Poppins-SemiBold.ttf", previewCss:"Verdana,sans-serif", note:"Tròn trịa · hiện đại" },
+  { name:"Bebas Neue", cat:"external", file:"BebasNeue-Regular.ttf", previewCss:"Impact,sans-serif", note:"Condensed · poster" },
+  { name:"Pacifico", cat:"external", file:"Pacifico-Regular.ttf", previewCss:"'Comic Sans MS',cursive", note:"Script · vui nhộn" },
+  { name:"Oswald", cat:"roblox", file:"Oswald-Medium.ttf", previewCss:"'Arial Narrow',sans-serif", note:"Narrow · gọn gàng" },
+  { name:"Playfair Display", cat:"external", file:"PlayfairDisplay-Bold.ttf", previewCss:"Georgia,serif", note:"Serif · sang trọng" },
+  { name:"Inter", cat:"roblox", file:"Inter-Regular.ttf", previewCss:"-apple-system,sans-serif", note:"UI · dễ đọc" },
+  { name:"Comfortaa", cat:"external", file:"Comfortaa-Bold.ttf", previewCss:"'Century Gothic',sans-serif", note:"Rounded · mềm mại" },
+];
+
+// ====== Sinh script Lua ======
+function buildScript(font){
+  const url = cdn(font.file);
+  const safe = font.name.replace(/[^A-Za-z0-9]/g,'');
+  return `-- ${font.name} — Custom Font Loader (FontVault)
+-- Tải font từ GitHub, lưu vào file, rồi lấy asset id.
+
+local FONT_NAME = "${safe}"
+local FONT_URL  = "${url}"
+local FONT_PATH = "CustomFonts/" .. FONT_NAME .. ".ttf"
+
+-- 1) Tải & ghi file nếu chưa có
+if not (isfile and isfile(FONT_PATH)) then
+    if makefolder and not (isfolder and isfolder("CustomFonts")) then
+        makefolder("CustomFonts")
+    end
+    local data = game:HttpGet(FONT_URL)
+    writefile(FONT_PATH, data)
+end
+
+-- 2) Đọc lại để kiểm tra
+local raw = readfile(FONT_PATH)
+print("[FontVault] Đã nạp " .. FONT_NAME .. " (" .. #raw .. " bytes)")
+
+-- 3) Lấy custom asset id (rbxasset://...)
+local assetId = getcustomasset(FONT_PATH)
+
+-- 4) Tạo Font object để gán cho TextLabel / TextButton
+local customFont = Font.new(assetId, Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+
+-- Ví dụ sử dụng:
+-- someTextLabel.FontFace = customFont
+return customFont`;
+}
+
+// ====== Render ======
+const grid = document.getElementById('grid');
+let activeFilter = 'all';
+let query = '';
+
+function render(){
+  const items = FONTS.filter(f =>
+    (activeFilter==='all' || f.cat===activeFilter) &&
+    f.name.toLowerCase().includes(query.toLowerCase())
+  );
+  grid.innerHTML = '';
+  if(!items.length){ grid.innerHTML = '<div class="empty">Không tìm thấy font nào 🙅</div>'; return; }
+  items.forEach(f => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-top">
+        <div>
+          <div class="card-name">${f.name}</div>
+          <div class="card-meta">${f.note}</div>
+        </div>
+        <span class="badge ${f.cat}">${f.cat==='roblox'?'Roblox':'External'}</span>
+      </div>
+      <div class="preview" style="font-family:${f.previewCss}">Aa Bb Cc 123</div>
+      <div class="copy-row">
+        <span class="copy-hint">Nhấp thẻ để xem · nút để copy</span>
+        <button class="copy-btn">📋 Copy</button>
+      </div>`;
+    const btn = card.querySelector('.copy-btn');
+    btn.addEventListener('click', (e)=>{ e.stopPropagation(); copyScript(f, btn); });
+    card.addEventListener('click', ()=> openModal(f));
+    grid.appendChild(card);
+  });
+}
+
+function copyText(text){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    return navigator.clipboard.writeText(text);
+  }
+  return new Promise((res)=>{
+    const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}
+    document.body.removeChild(ta);res();
+  });
+}
+
+function copyScript(font, btn){
+  copyText(buildScript(font)).then(()=>{
+    showToast(`Đã copy script cho ${font.name}!`);
+    if(btn){ btn.classList.add('copied'); btn.textContent='✓ Copied'; setTimeout(()=>{btn.classList.remove('copied');btn.textContent='📋 Copy';},1600); }
+  });
+}
+
+// ====== Modal ======
+const modalBg=document.getElementById('modalBg');
+let modalFont=null;
+function openModal(font){
+  modalFont=font;
+  document.getElementById('modalTitle').textContent=font.name+' — Lua script';
+  document.getElementById('modalCode').textContent=buildScript(font);
+  modalBg.classList.add('show');
+}
+function closeModal(){ modalBg.classList.remove('show'); }
+document.getElementById('modalClose').addEventListener('click',closeModal);
+modalBg.addEventListener('click',(e)=>{ if(e.target===modalBg) closeModal(); });
+document.getElementById('modalCopy').addEventListener('click',()=>{ if(modalFont) copyScript(modalFont); });
+document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeModal(); });
+
+// ====== Toast ======
+const toast=document.getElementById('toast');
+let toastT=null;
+function showToast(msg){
+  document.getElementById('toastMsg').textContent=msg;
+  toast.classList.add('show');
+  clearTimeout(toastT);
+  toastT=setTimeout(()=>toast.classList.remove('show'),2200);
+}
+
+// ====== Controls ======
+document.getElementById('search').addEventListener('input',(e)=>{ query=e.target.value; render(); });
+document.getElementById('tabs').addEventListener('click',(e)=>{
+  const t=e.target.closest('.tab'); if(!t) return;
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active'); activeFilter=t.dataset.filter; render();
+});
+
+render();
+
+// Nếu có fonts.json (khi host trên web) thì ưu tiên dùng file đó.
+fetch('./fonts.json').then(r=>r.ok?r.json():null).then(data=>{
+  if(Array.isArray(data) && data.length){ FONTS = data; render(); }
+}).catch(()=>{});
+</script>
+</body>
+</html>

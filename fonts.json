@@ -1,0 +1,11 @@
+[
+  { "name": "Roboto Mono", "cat": "roblox", "file": "RobotoMono-Regular.ttf", "previewCss": "'Courier New',monospace", "note": "Monospace · code style" },
+  { "name": "Montserrat", "cat": "roblox", "file": "Montserrat-Bold.ttf", "previewCss": "'Trebuchet MS',sans-serif", "note": "Geometric · tiêu đề" },
+  { "name": "Poppins", "cat": "roblox", "file": "Poppins-SemiBold.ttf", "previewCss": "Verdana,sans-serif", "note": "Tròn trịa · hiện đại" },
+  { "name": "Bebas Neue", "cat": "external", "file": "BebasNeue-Regular.ttf", "previewCss": "Impact,sans-serif", "note": "Condensed · poster" },
+  { "name": "Pacifico", "cat": "external", "file": "Pacifico-Regular.ttf", "previewCss": "'Comic Sans MS',cursive", "note": "Script · vui nhộn" },
+  { "name": "Oswald", "cat": "roblox", "file": "Oswald-Medium.ttf", "previewCss": "'Arial Narrow',sans-serif", "note": "Narrow · gọn gàng" },
+  { "name": "Playfair Display", "cat": "external", "file": "PlayfairDisplay-Bold.ttf", "previewCss": "Georgia,serif", "note": "Serif · sang trọng" },
+  { "name": "Inter", "cat": "roblox", "file": "Inter-Regular.ttf", "previewCss": "-apple-system,sans-serif", "note": "UI · dễ đọc" },
+  { "name": "Comfortaa", "cat": "external", "file": "Comfortaa-Bold.ttf", "previewCss": "'Century Gothic',sans-serif", "note": "Rounded · mềm mại" }
+]
